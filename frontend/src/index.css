@@ -1,0 +1,45 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: dark;
+  --bg-color: #0f172a;
+  --panel-bg: #1e293b;
+  --primary: #3b82f6;
+  --text: #f8fafc;
+  --text-dim: #94a3b8;
+  --border: #334155;
+
+  color: var(--text);
+  background-color: var(--bg-color);
+}
+
+body {
+  margin: 0;
+  display: flex;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+}
+
+h1, h2, h3, h4 {
+  margin-top: 0;
+  color: white;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
