@@ -11,7 +11,7 @@ def preprocess_data(df, scaler=None):
     df = df.copy()
     
     # 1. Handling Missing Values
-    df = df.fillna(method='ffill').fillna(method='bfill').fillna(0)
+    df = df.ffill().bfill().fillna(0)
     
     # 2. Convert Timestamp
     if 'timestamp' in df.columns:

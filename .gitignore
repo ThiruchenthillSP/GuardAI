@@ -8,3 +8,20 @@ env/
 *.db
 backend/models/saved/
 .vscode/
+
+# Resume files (private)
+Thiruchenthill_SP_Resume.docx
+generate_resume.py
+
+# Temp Word files
+~$*.docx
+
+# Build output
+frontend/dist/
+
+# Scratch
+verify_paper_values.py
+
+# Large datasets (GitHub 100MB limit)
+backend/financial_fraud_detection_dataset.csv
+backend/ieee_cis/

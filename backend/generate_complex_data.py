@@ -6,9 +6,9 @@ import datetime
 import os
 
 def generate():
-    print("Generating 50,000 row complex non-linear classification dataset...")
+    print("Generating 100,000 row complex non-linear classification dataset...")
     # Add non-linear parameters to ensure Logistic Reg scores realistically lower than Forest/XGBoost
-    X, y = make_classification(n_samples=50000, n_features=12, n_informative=8, n_redundant=2, 
+    X, y = make_classification(n_samples=100000, n_features=12, n_informative=8, n_redundant=2, 
                                n_repeated=0, n_classes=2, n_clusters_per_class=2, 
                                weights=[0.90, 0.10], class_sep=0.65, random_state=42)
     
@@ -17,9 +17,9 @@ def generate():
     
     df['is_fraud'] = y
     
-    df['transaction_id'] = [str(uuid.uuid4())[:8] for _ in range(50000)]
+    df['transaction_id'] = [str(uuid.uuid4())[:8] for _ in range(100000)]
     now = datetime.datetime.now()
-    df['timestamp'] = [now - datetime.timedelta(minutes=int(np.random.randint(0, 10000))) for _ in range(50000)]
+    df['timestamp'] = [now - datetime.timedelta(minutes=int(np.random.randint(0, 10000))) for _ in range(100000)]
     
     fraud_ips = [f"192.168.1.{i}" for i in range(1, 40)]
     normal_ips = [f"10.0.{i}.{j}" for i in range(50) for j in range(50)]

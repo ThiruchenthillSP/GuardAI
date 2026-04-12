@@ -1,0 +1,6 @@
+@echo off
+echo Killing Port 8000 (Backend)...
+FOR /F "tokens=5" %%a in ('netstat -aon ^| findstr :8000') do taskkill /F /PID %%a
+echo Killing Port 5173 (Frontend)...
+FOR /F "tokens=5" %%a in ('netstat -aon ^| findstr :5173') do taskkill /F /PID %%a
+echo Servers Terminated.

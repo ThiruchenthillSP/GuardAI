@@ -5,6 +5,8 @@ import Sidebar from './components/Sidebar'
 import Dashboard from './pages/Dashboard'
 import Prediction from './pages/Prediction'
 import TransactionNetwork from './pages/TransactionNetwork'
+import ResearchMetrics from './pages/ResearchMetrics'
+import Settings from './pages/Settings'
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/prediction" element={<Prediction />} />
               <Route path="/network" element={<TransactionNetwork />} />
+              <Route path="/research" element={<ResearchMetrics />} />
+              <Route path="/settings" element={<Settings />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </div>

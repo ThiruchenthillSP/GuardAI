@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { LayoutDashboard, ShieldAlert, Settings, LogOut, Shield, Share2 } from 'lucide-react'
+import { LayoutDashboard, ShieldAlert, Settings, LogOut, Shield, Share2, FlaskConical } from 'lucide-react'
 
 const Sidebar = () => {
   const location = useLocation()
@@ -39,6 +39,7 @@ const Sidebar = () => {
         <NavItem to="/" icon={LayoutDashboard} label="Dashboard" />
         <NavItem to="/network" icon={Share2} label="Network Analysis" />
         <NavItem to="/prediction" icon={ShieldAlert} label="Predict Fraud" />
+        <NavItem to="/research" icon={FlaskConical} label="Research Metrics" />
         <NavItem to="/settings" icon={Settings} label="Settings" />
       </nav>
 

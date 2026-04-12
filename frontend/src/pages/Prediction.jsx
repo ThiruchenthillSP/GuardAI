@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ShieldAlert, ShieldCheck, Loader2, Search } from 'lucide-react'
+import { ShieldAlert, ShieldCheck, Loader2, Search, Network } from 'lucide-react'
 import { predictFraud } from '../services/api'
 
 function Prediction() {
@@ -83,17 +83,76 @@ function Prediction() {
 
         <div>
           {result ? (
-            <div style={{ background: '#1e293b', padding: '2rem', borderRadius: '12px', border: `2px solid ${result.is_fraud ? '#ef4444' : '#22c55e'}`, textAlign: 'center' }}>
-              <div style={{ marginBottom: '1.5rem' }}>
-                {result.is_fraud ? <ShieldAlert color="#ef4444" size={80} /> : <ShieldCheck color="#22c55e" size={80} />}
+            <div>
+              <div style={{ background: '#1e293b', padding: '2rem', borderRadius: '12px', border: `2px solid ${result.is_fraud ? '#ef4444' : '#22c55e'}`, textAlign: 'center', marginBottom: '1.5rem' }}>
+                <div style={{ marginBottom: '1.5rem' }}>
+                  {result.is_fraud ? <ShieldAlert color="#ef4444" size={80} /> : <ShieldCheck color="#22c55e" size={80} />}
+                </div>
+                <h2 style={{ color: result.is_fraud ? '#ef4444' : '#22c55e', margin: '0 0 1rem 0' }}>
+                  {result.is_fraud ? 'FRAUD SUSPECTED' : 'TRANSACTION SECURE'}
+                </h2>
+                <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'white', marginBottom: '1rem' }}>
+                  {(result.probability * 100).toFixed(0)}%
+                </div>
+                <p style={{ color: '#94a3b8' }}>Neural Risk Confidence Level</p>
               </div>
-              <h2 style={{ color: result.is_fraud ? '#ef4444' : '#22c55e', margin: '0 0 1rem 0' }}>
-                {result.is_fraud ? 'FRAUD SUSPECTED' : 'TRANSACTION SECURE'}
-              </h2>
-              <div style={{ fontSize: '3rem', fontWeight: 'bold', color: 'white', marginBottom: '1rem' }}>
-                {(result.probability * 100).toFixed(0)}%
+
+              {/* SHAP Explanation */}
+              {result.explanation && Object.keys(result.explanation).length > 0 && (
+                <div style={{ background: '#1e293b', padding: '1.5rem', borderRadius: '12px', border: '1px solid #334155', marginBottom: '1.5rem' }}>
+                  <h4 style={{ color: 'white', margin: '0 0 1rem 0', fontSize: '0.9rem' }}>SHAP Feature Contributions</h4>
+                  {Object.entries(result.explanation).map(([feat, val], i) => (
+                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '0.5rem 0', borderBottom: '1px solid #0f172a' }}>
+                      <span style={{ color: '#94a3b8', fontSize: '0.85rem' }}>{feat}</span>
+                      <span style={{ color: val > 0 ? '#ef4444' : '#22c55e', fontFamily: 'monospace', fontSize: '0.85rem' }}>
+                        {val > 0 ? '+' : ''}{val.toFixed(4)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Phase 4b: Network Context */}
+              <div style={{ background: '#1e293b', padding: '1.5rem', borderRadius: '12px', border: '1px solid #334155' }}>
+                <h4 style={{ color: 'white', margin: '0 0 1rem 0', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Network size={16} color="#8b5cf6" /> Network Context
+                </h4>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                  <div style={{ background: '#0f172a', padding: '0.75rem', borderRadius: '6px' }}>
+                    <p style={{ color: '#94a3b8', margin: 0, fontSize: '0.75rem' }}>Degree Centrality</p>
+                    <p style={{ color: 'white', margin: '0.25rem 0 0', fontFamily: 'monospace' }}>
+                      {result.explanation?.degree_centrality !== undefined ? result.explanation.degree_centrality.toFixed(4) : '—'}
+                    </p>
+                  </div>
+                  <div style={{ background: '#0f172a', padding: '0.75rem', borderRadius: '6px' }}>
+                    <p style={{ color: '#94a3b8', margin: 0, fontSize: '0.75rem' }}>Cluster Size</p>
+                    <p style={{ color: 'white', margin: '0.25rem 0 0', fontFamily: 'monospace' }}>
+                      {result.explanation?.cluster_size !== undefined ? Math.round(result.explanation.cluster_size) : '—'}
+                    </p>
+                  </div>
+                </div>
+                {(() => {
+                  const riskLevel = result.probability > 0.7 ? 'High' : result.probability > 0.3 ? 'Medium' : 'Low'
+                  const riskColor = riskLevel === 'High' ? '#ef4444' : riskLevel === 'Medium' ? '#f59e0b' : '#22c55e'
+                  return (
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                        <div style={{ width: 8, height: 8, borderRadius: '50%', background: riskColor }} />
+                        <span style={{ color: riskColor, fontWeight: 600, fontSize: '0.9rem' }}>
+                          Fraud Ring Risk: {riskLevel}
+                        </span>
+                      </div>
+                      {result.probability > 0.7 && (
+                        <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: '6px', padding: '0.75rem', marginTop: '0.5rem' }}>
+                          <p style={{ color: '#ef4444', margin: 0, fontSize: '0.85rem' }}>
+                            ⚠ This transaction shares network connections with known fraud patterns
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })()}
               </div>
-              <p style={{ color: '#94a3b8' }}>Neural Risk Confidence Level</p>
             </div>
           ) : (
             <div style={{ background: '#1e293b', padding: '3rem', borderRadius: '12px', border: '1px dashed #334155', textAlign: 'center', color: '#94a3b8' }}>
