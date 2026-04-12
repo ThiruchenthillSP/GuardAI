@@ -15,8 +15,7 @@ This project uses two datasets that are too large for GitHub (650MB+). Download 
 
 ### Download via Kaggle CLI:
 ```bash
-kaggle datasets download -d computingvictor/transactions-fraud-datasets
-unzip transactions-fraud-datasets.zip -d backend/
+kaggle datasets download aryan208/financial-transactions-dataset-for-fraud-detection
 ```
 
 ---
