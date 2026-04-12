@@ -6,7 +6,7 @@ This project uses two datasets that are too large for GitHub (650MB+). Download 
 
 ## 1. PaySim-Style Synthetic Financial Fraud Dataset
 
-- **Kaggle:** https://www.kaggle.com/datasets/computingvictor/transactions-fraud-datasets
+- **Kaggle:** https://www.kaggle.com/datasets/aryan208/financial-transactions-dataset-for-fraud-detection
 - **Filename:** `financial_fraud_detection_dataset.csv`
 - **Size:** ~759 MB
 - **Rows:** 150,000 (capped during training for OOM safety)
