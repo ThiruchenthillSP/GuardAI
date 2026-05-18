@@ -394,7 +394,7 @@ def _save_charts(metrics, ablation_5step, y_test):
         print(f"[-] Chart failed: {e}"); traceback.print_exc()
 
 
-def save_models(models, explainer, scaler=None, directory='models/saved'):
+def save_models(models, explainer, scaler=None, label_encoders=None, directory='models/saved'):
     if not os.path.exists(directory): os.makedirs(directory)
     for name, model in models.items():
         fn = f"{directory}/{name.replace(' ', '_').lower()}.pkl"
@@ -406,3 +406,6 @@ def save_models(models, explainer, scaler=None, directory='models/saved'):
     if scaler:
         with open(f"{directory}/scaler.pkl", 'wb') as f: pickle.dump(scaler, f)
         print("Saved Scaler.")
+    if label_encoders:
+        with open(f"{directory}/label_encoders.pkl", 'wb') as f: pickle.dump(label_encoders, f)
+        print(f"Saved Label Encoders: {list(label_encoders.keys())}")

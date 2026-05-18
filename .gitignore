@@ -19,9 +19,11 @@ generate_resume.py
 # Build output
 frontend/dist/
 
-# Scratch
+# Scratch / temp scripts
 verify_paper_values.py
+inspect_db.py
 
 # Large datasets (GitHub 100MB limit)
 backend/financial_fraud_detection_dataset.csv
 backend/ieee_cis/
+

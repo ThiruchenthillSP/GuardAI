@@ -40,7 +40,7 @@ if not exist "frontend\node_modules" (
 echo [3/3] Launching Backend and Frontend...
 
 :: Start Backend
-start "GuardAI - Backend" /D "%~dp0backend" cmd /k "%PYTHON_CMD% main.py"
+start "GuardAI - Backend" /D "%~dp0backend" cmd /k "set PYTHONIOENCODING=utf-8 && %PYTHON_CMD% main.py"
 
 :: Start Frontend
 start "GuardAI - Frontend" /D "%~dp0frontend" cmd /k "npm run dev"

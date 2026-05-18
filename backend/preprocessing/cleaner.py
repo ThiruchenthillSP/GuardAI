@@ -1,9 +1,11 @@
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 
-def preprocess_data(df, scaler=None):
+def preprocess_data(df, scaler=None, label_encoders=None):
     """
     Cleans and prepares the data for feature engineering.
+    Returns (df, scaler, label_encoders) on first run (training).
+    Returns df on subsequent runs (prediction with existing scaler/encoders).
     """
     print("\n--- Preprocessing Data ---")
     
@@ -19,10 +21,27 @@ def preprocess_data(df, scaler=None):
     
     # 3. Categorical Encoding (Label Encoding)
     categorical_cols = ['device_used', 'location', 'payment_channel', 'transaction_type', 'merchant_category']
-    le = LabelEncoder()
-    for col in categorical_cols:
-        if col in df.columns:
-            df[col] = le.fit_transform(df[col].astype(str))
+    
+    if label_encoders is None:
+        # Training mode: fit new encoders and save them
+        label_encoders = {}
+        for col in categorical_cols:
+            if col in df.columns:
+                le = LabelEncoder()
+                df[col] = le.fit_transform(df[col].astype(str))
+                label_encoders[col] = le
+        print(f"  [Preprocess] Fitted {len(label_encoders)} label encoders: {list(label_encoders.keys())}")
+    else:
+        # Prediction mode: use existing encoders
+        for col in categorical_cols:
+            if col in df.columns and col in label_encoders:
+                le = label_encoders[col]
+                # Handle unseen labels gracefully — map unknowns to 0
+                known = set(le.classes_)
+                df[col] = df[col].astype(str).apply(
+                    lambda x: le.transform([x])[0] if x in known else 0
+                )
+        print(f"  [Preprocess] Applied {len(label_encoders)} saved label encoders")
             
     # 4. Numerical Normalization/Scaling
     numerical_cols = [
@@ -35,30 +54,31 @@ def preprocess_data(df, scaler=None):
         for col in numerical_cols:
             if col in df.columns:
                 col_scaler = StandardScaler()
-                # To avoid warning, we do not suppress it but StandardScaler handles DataFrame gracefully
                 df[col] = col_scaler.fit_transform(df[[col]])
                 scaler[col] = col_scaler
-        return df, scaler
+        print(f"  [Preprocess] Fitted {len(scaler)} scalers: {list(scaler.keys())}")
+        return df, scaler, label_encoders
     else:
         # Use existing scaler for prediction
-        # Check if scaler is a dict (the new way) or single scaler (the old bugged way)
         is_dict = isinstance(scaler, dict)
         for col in numerical_cols:
             if col in df.columns:
                 if is_dict and col in scaler:
                     df[col] = scaler[col].transform(df[[col]])
                 elif not is_dict:
-                    # Fallback for old single scaler if it somehow matches
                     try:
                         df[col] = scaler.transform(df[[col]])
                     except Exception:
                         pass
+        print(f"  [Preprocess] Applied saved scalers")
         return df
 
 if __name__ == "__main__":
     from data.ingestion import load_data
     DATA_PATH = "financial_fraud_detection_dataset.csv"
     df = load_data(DATA_PATH, sample_size=1000)
-    df_clean = preprocess_data(df)
+    df_clean, scaler, encoders = preprocess_data(df)
     print("\nPreprocessed Data Sample:")
     print(df_clean.head())
+    print(f"\nLabel Encoders: {list(encoders.keys())}")
+    print(f"Scalers: {list(scaler.keys())}")
