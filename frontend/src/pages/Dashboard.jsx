@@ -46,27 +46,45 @@ const Dashboard = () => {
   const latency = modelData?.latency_ms || {}
 
   const MetricCard = ({ icon: Icon, label, value, unit, color }) => (
-    <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', padding: '1.5rem', flex: 1, minWidth: '200px' }}>
+    <div className="glass-panel" style={{ padding: '1.5rem', flex: 1, minWidth: '200px', display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+        <span style={{ fontSize: '0.8rem', color: '#9ca3af', fontWeight: 500 }}>{label}</span>
         <Icon size={20} color={color} />
-        <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>{label}</span>
       </div>
-      <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.5rem' }}>
-        <h2 style={{ fontSize: '2rem', margin: 0, color: 'white' }}>{value}</h2>
-        {unit && <span style={{ fontSize: '0.9rem', color: '#94a3b8' }}>{unit}</span>}
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.25rem', marginTop: 'auto' }}>
+        <span style={{ fontSize: '2rem', fontWeight: 600, color: 'white', lineHeight: 1 }}>{value}</span>
+        {unit && <span style={{ color: '#9ca3af', fontSize: '1rem', fontWeight: 500 }}>{unit}</span>}
       </div>
     </div>
   )
 
   return (
-    <div>
+    <div style={{ maxWidth: '1200px' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: '2rem' }}>Operations Dashboard</h1>
-          <p style={{ color: '#94a3b8', margin: 0 }}>Overview of system security</p>
+          <h1 style={{ margin: 0, fontSize: '2rem', fontWeight: 600, color: 'white' }}>System Overview</h1>
+          <p style={{ color: '#9ca3af', margin: '0.5rem 0 0', fontSize: '1rem' }}>Real-time fraud analytics engine</p>
         </div>
-        <button onClick={handleTrain} disabled={loading} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: '#3b82f6', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
-          {loading ? <RefreshCw size={18} className="animate-spin" /> : <Zap size={18} />}
+        <button 
+          onClick={handleTrain} 
+          disabled={loading}
+          style={{ 
+            background: '#2563eb', 
+            border: 'none', 
+            color: 'white', 
+            padding: '0.6rem 1.25rem', 
+            borderRadius: '6px', 
+            cursor: loading ? 'wait' : 'pointer', 
+            display: 'flex', 
+            alignItems: 'center', 
+            gap: '0.5rem', 
+            fontWeight: 500,
+            transition: 'background 0.2s'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.background = '#1d4ed8'}
+          onMouseLeave={(e) => e.currentTarget.style.background = '#2563eb'}
+        >
+          {loading ? <RefreshCw size={16} className="animate-spin" /> : <Zap size={16} />}
           {loading ? 'Initializing...' : 'Initialize AI Brain'}
         </button>
       </header>
@@ -79,26 +97,40 @@ const Dashboard = () => {
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.5rem', marginBottom: '2.5rem' }}>
-        <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', padding: '1.5rem' }}>
-          <h3 style={{ marginBottom: '1.5rem', color: 'white' }}>Volume Trend</h3>
+        <div className="glass-panel" style={{ padding: '1.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1.5rem' }}>
+            <Activity color="#3b82f6" size={20} />
+            <h3 style={{ margin: 0, fontSize: '1.1rem', color: 'white', fontWeight: 500 }}>Volume Trend</h3>
+          </div>
           <div style={{ width: '100%', height: '300px' }}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
-                <XAxis dataKey="name" stroke="#94a3b8" fontSize={12} />
-                <YAxis stroke="#94a3b8" fontSize={12} />
-                <Tooltip contentStyle={{ backgroundColor: '#1e293b', border: '1px solid #334155', borderRadius: '8px' }} />
-                <Area type="monotone" dataKey="volume" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.1} />
+                <defs>
+                  <linearGradient id="colorVolume" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.4}/>
+                    <stop offset="95%" stopColor="#38bdf8" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" vertical={false} />
+                <XAxis dataKey="name" stroke="#94a3b8" axisLine={false} tickLine={false} fontSize={12} />
+                <YAxis stroke="#94a3b8" axisLine={false} tickLine={false} fontSize={12} />
+                <Tooltip contentStyle={{ background: 'rgba(15, 23, 42, 0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', backdropFilter: 'blur(10px)' }} />
+                <Area type="monotone" dataKey="volume" stroke="#38bdf8" strokeWidth={3} fillOpacity={1} fill="url(#colorVolume)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
-        <LiveFeed />
+        <div className="glass-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
+          <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.2rem', color: 'white' }}>Live Network Feed</h3>
+          <div style={{ flex: 1, overflow: 'hidden' }}>
+            <LiveFeed />
+          </div>
+        </div>
       </div>
 
       {/* Phase 4a: Model Performance Section */}
       {models.length > 0 && (
-        <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', padding: '1.5rem', marginBottom: '2.5rem' }}>
+        <div className="glass-panel" style={{ padding: '2rem', marginBottom: '2.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
             <TrendingUp size={20} color="#10b981" />
             <h3 style={{ margin: 0, color: 'white' }}>Model Performance</h3>

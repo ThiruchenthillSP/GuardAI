@@ -1,183 +1,179 @@
 import React, { useState } from 'react'
-import { User, Lock, Zap, Globe, Terminal, Code, Cpu, ShieldCheck, Activity, FileText, Check, Loader } from 'lucide-react'
+import { User, Lock, Zap, Globe, Terminal, Code, Cpu, ShieldCheck, Activity, FileText, Check, Loader, Download } from 'lucide-react'
 import { generatePaperFigures, getPaperMetricsSummary } from '../services/api'
-import { motion, AnimatePresence } from 'framer-motion'
-import AnimatedCard from '../components/AnimatedCard'
+import { motion } from 'framer-motion'
 
 function Settings() {
   const [activeTab, setActiveTab] = useState('ENGINE_TUNING')
   const [exporting, setExporting] = useState(false)
   const [exportResult, setExportResult] = useState(null)
 
-  const TabHUD = ({ id, label, icon: Icon }) => (
+  const TabItem = ({ id, label, icon: Icon }) => (
     <button 
       onClick={() => setActiveTab(id)}
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: '1.5rem',
-        padding: '1.75rem 2.5rem',
+        gap: '1rem',
+        padding: '1rem 1.5rem',
         width: '100%',
-        background: activeTab === id ? 'hsla(var(--primary), 0.1)' : 'transparent',
+        background: activeTab === id ? '#27272a' : 'transparent',
         border: 'none',
-        borderRight: activeTab === id ? '4px solid hsl(var(--primary))' : '4px solid transparent',
-        color: activeTab === id ? 'hsl(var(--primary))' : 'hsla(var(--text), 0.3)',
-        fontWeight: 900,
-        fontFamily: 'var(--font-mono)',
-        fontSize: '0.9rem',
+        borderRadius: '8px',
+        color: activeTab === id ? '#ffffff' : '#9ca3af',
+        fontWeight: activeTab === id ? 600 : 500,
+        fontSize: '0.95rem',
         cursor: 'pointer',
-        transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-        textAlign: 'left',
-        letterSpacing: '3px',
-        textTransform: 'uppercase',
-        position: 'relative'
+        transition: 'all 0.2s ease',
+        textAlign: 'left'
       }}
+      onMouseEnter={(e) => { if (activeTab !== id) e.currentTarget.style.background = '#18181b' }}
+      onMouseLeave={(e) => { if (activeTab !== id) e.currentTarget.style.background = 'transparent' }}
     >
-      {activeTab === id && <motion.div layoutId="tabPulse" style={{ position: 'absolute', inset: 0, background: 'hsla(var(--primary), 0.05)', zIndex: -1 }} />}
-      <Icon size={18} strokeWidth={activeTab === id ? 2.5 : 1.5} />
+      <Icon size={18} color={activeTab === id ? '#3b82f6' : '#9ca3af'} />
       {label}
     </button>
   )
 
-  const HUDToggle = ({ label, enabled, desc }) => (
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '2.5rem 0', borderBottom: '1px solid hsla(var(--text), 0.05)', position: 'relative' }}>
-      <div style={{ flex: 1 }}>
-        <p className="mono" style={{ margin: 0, fontWeight: 900, fontSize: '1.1rem', color: 'white', textTransform: 'uppercase', letterSpacing: '3px' }}>{label}</p>
-        <p style={{ margin: 0, fontSize: '0.9rem', color: 'hsl(var(--text-dim))', marginTop: '0.6rem', fontWeight: 300, maxWidth: '500px' }}>{desc}</p>
+  const SettingToggle = ({ label, enabled, desc }) => (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 0', borderBottom: '1px solid #27272a' }}>
+      <div style={{ flex: 1, paddingRight: '2rem' }}>
+        <p style={{ margin: 0, fontWeight: 600, fontSize: '1rem', color: 'white' }}>{label}</p>
+        <p style={{ margin: '0.4rem 0 0', fontSize: '0.9rem', color: '#9ca3af', lineHeight: 1.5 }}>{desc}</p>
       </div>
       <div style={{ 
-        width: '64px', 
-        height: '32px', 
-        background: enabled ? 'hsl(var(--primary))' : 'hsla(var(--text), 0.08)', 
-        borderRadius: 0, 
+        width: '44px', 
+        height: '24px', 
+        background: enabled ? '#3b82f6' : '#27272a', 
+        borderRadius: '12px', 
         position: 'relative', 
         cursor: 'pointer',
-        transition: 'all 0.4s',
-        boxShadow: enabled ? '0 0 25px hsla(var(--primary), 0.5)' : 'none',
-        border: '1px solid hsla(var(--text), 0.1)'
+        transition: 'all 0.3s'
       }}>
         <motion.div 
-          animate={{ x: enabled ? 36 : 4 }}
-          style={{ width: '22px', height: '22px', background: 'white', position: 'absolute', top: '4px', left: 0, borderRadius: 0, boxShadow: '0 0 10px rgba(0,0,0,0.5)' }} 
+          animate={{ x: enabled ? 22 : 2 }}
+          style={{ width: '20px', height: '20px', background: 'white', position: 'absolute', top: '2px', borderRadius: '50%' }} 
         />
       </div>
     </div>
   )
 
   return (
-    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}>
-      <header style={{ marginBottom: '6.5rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '1.5rem' }}>
-           <Terminal size={18} color="hsl(var(--primary))" />
-           <span className="mono" style={{ fontSize: '0.75rem', fontWeight: 900, color: 'hsla(var(--primary), 0.6)', textTransform: 'uppercase', letterSpacing: '4px' }}>
-             CORE_CONFIGURATION_SUITE_v6.1
-           </span>
-        </div>
-        <h1 className="text-hud-gradient" style={{ fontSize: '6rem', margin: 0, fontWeight: 1000, letterSpacing: '-6px', textTransform: 'uppercase', lineHeight: 0.9 }}>
-          Module <span style={{ opacity: 0.1 }}>Settings</span>
-        </h1>
+    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} style={{ paddingBottom: '4rem' }}>
+      <header style={{ marginBottom: '3rem' }}>
+        <h1 style={{ fontSize: '2rem', margin: 0, fontWeight: 600, color: 'white' }}>System Settings</h1>
+        <p style={{ margin: '0.5rem 0 0', color: '#9ca3af', fontSize: '1.1rem' }}>Configure the GuardAI engine and export research artifacts.</p>
       </header>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '350px 1fr', gap: '6rem', alignItems: 'start' }}>
-        <div className="card-hud" style={{ display: 'flex', flexDirection: 'column', padding: '1rem 0' }}>
-          <TabHUD id="AUTH_IDENT" label="AUTH_IDENTITY" icon={User} />
-          <TabHUD id="ENGINE_TUNING" label="ENGINE_TUNING" icon={Zap} />
-          <TabHUD id="CORE_SHIELD" label="CORE_SHIELD" icon={Lock} />
-          <TabHUD id="GLOBAL_BLUEPRINT" label="GLOBAL_BLUEPRINT" icon={Globe} />
-          <TabHUD id="ROOT_SHELL" label="ROOT_LOG_DECRYPT" icon={Terminal} />
+      <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: '2rem', alignItems: 'start' }}>
+        {/* Navigation Sidebar */}
+        <div className="glass-panel" style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '1px', padding: '0.5rem 1rem', display: 'block' }}>Configuration</span>
+          <TabItem id="AUTH_IDENT" label="Identity & Access" icon={User} />
+          <TabItem id="ENGINE_TUNING" label="Engine Tuning" icon={Zap} />
+          <TabItem id="CORE_SHIELD" label="Security Protocols" icon={Lock} />
+          <TabItem id="GLOBAL_BLUEPRINT" label="Network Topology" icon={Globe} />
+          <TabItem id="ROOT_SHELL" label="Advanced Logs" icon={Terminal} />
         </div>
 
-        <AnimatedCard delay={0.1} className="card-hud" style={{ padding: '4.5rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', marginBottom: '5rem' }}>
-             <div style={{ width: '64px', height: '64px', background: 'hsla(var(--primary), 0.08)', border: '1px solid hsla(var(--primary), 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 30px hsla(var(--primary), 0.2)' }}>
-                <Cpu size={32} color="hsl(var(--primary))" />
-             </div>
-             <div>
-               <h3 className="mono" style={{ margin: 0, fontSize: '2rem', fontWeight: 900, color: 'white', letterSpacing: '4px' }}>CONFIG::{activeTab}</h3>
-               <p className="mono" style={{ margin: 0, fontSize: '0.85rem', color: 'hsl(var(--primary))', fontWeight: 900, opacity: 0.8 }}>SYSTEM_PARAMETER_OVERRIDE_VERIFIED</p>
-             </div>
-          </div>
-
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <HUDToggle label="Neural Link Stabilization" desc="Forced architectural architectural architectural fingerprinting for every administrative operational mission cycle." enabled={true} />
-            <HUDToggle label="Gradient Descent Recalibration" desc="Engage real-time weight re-sync on every 4.5ms mission mission mission heartbeat." enabled={false} />
-            <HUDToggle label="Core Cryptographic Dissolution" desc="Deep packet packet packet packet packet decryption of all high-security high-security high-security neural ingestion ingestion ingestion nodes." enabled={true} />
-            <HUDToggle label="Darknet Exit-Node Isolation" desc="Automatically flag and quarantine quarantine quarantine requests requests requests originating from known onion-clusters." enabled={true} />
-            <HUDToggle label="Neural Debug Protocol" desc="Allow raw tensor tensor tensor access for low-level feature-engineering feature-engineering feature-engineering forensics forensics forensics forensics mode." enabled={false} />
-          </div>
-
-          <div style={{ marginTop: '6rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem' }}>
-            <button className="btn-hud" style={{ width: '100%', fontSize: '1.1rem' }}>COMMIT_TO_KERNEL</button>
-            <button className="btn-hud" style={{ border: '1px solid hsla(var(--text), 0.1)', color: 'hsla(var(--text), 0.3)', width: '100%', fontSize: '1.1rem' }}>REVERT_FACTORY</button>
-          </div>
-        </AnimatedCard>
-
-        <div style={{ gridColumn: 'span 2', marginTop: '3rem' }}>
-          <div className="card-hud" style={{ display: 'flex', alignItems: 'center', gap: '4rem', padding: '3rem' }}>
-            <div style={{ width: '80px', height: '80px', background: 'hsla(var(--primary), 0.1)', border: '1px solid hsla(var(--primary), 0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Code size={42} color="hsl(var(--primary))" />
+        {/* Main Settings Area */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          
+          <div className="glass-panel" style={{ padding: '2.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '2.5rem' }}>
+               <div style={{ width: '56px', height: '56px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Cpu size={28} color="#3b82f6" />
+               </div>
+               <div>
+                 <h3 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 600, color: 'white' }}>Engine Tuning</h3>
+                 <p style={{ margin: '0.2rem 0 0', fontSize: '0.9rem', color: '#9ca3af' }}>Manage inference thresholds and neural pathways.</p>
+               </div>
             </div>
-            <div style={{ flex: 1 }}>
-              <h4 className="mono" style={{ margin: 0, fontSize: '1.6rem', fontWeight: 900, color: 'white', letterSpacing: '4px' }}>ROOT_AUDIT_LOG_EXPORT</h4>
-              <p style={{ margin: 0, fontSize: '1.1rem', color: 'hsl(var(--text-dim))', fontWeight: 300, marginTop: '0.5rem' }}>Full audit logs available for forensic download.</p>
-            </div>
-            <button className="btn-hud" style={{ border: '1px solid hsl(var(--primary))', color: 'hsl(var(--primary))', padding: '1rem 3rem' }}>EXPORT_LOGS</button>
-          </div>
-        </div>
 
-        {/* Phase 5c: Export Paper Package */}
-        <div style={{ gridColumn: 'span 2', marginTop: '2rem' }}>
-          <div className="card-hud" style={{ padding: '3rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '2rem', marginBottom: '2rem' }}>
-              <div style={{ width: '64px', height: '64px', background: 'rgba(139,92,246,0.1)', border: '1px solid rgba(139,92,246,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <FileText size={32} color="#8b5cf6" />
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <SettingToggle label="Neural Link Stabilization" desc="Force architectural fingerprinting for every operational mission cycle." enabled={true} />
+              <SettingToggle label="Gradient Descent Recalibration" desc="Engage real-time weight re-sync on every heartbeat." enabled={false} />
+              <SettingToggle label="Core Cryptographic Dissolution" desc="Deep packet decryption of all high-security neural ingestion nodes." enabled={true} />
+              <SettingToggle label="Neural Debug Protocol" desc="Allow raw tensor access for low-level feature-engineering forensics mode." enabled={false} />
+            </div>
+
+            <div style={{ marginTop: '3rem', display: 'flex', gap: '1rem' }}>
+              <button style={{ background: '#2563eb', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '6px', fontWeight: 500, cursor: 'pointer' }}>Save Changes</button>
+              <button style={{ background: '#27272a', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '6px', fontWeight: 500, cursor: 'pointer' }}>Reset to Defaults</button>
+            </div>
+          </div>
+
+          <div className="glass-panel" style={{ padding: '2.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '1.5rem' }}>
+              <div style={{ width: '56px', height: '56px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Code size={28} color="#10b981" />
               </div>
               <div style={{ flex: 1 }}>
-                <h4 className="mono" style={{ margin: 0, fontSize: '1.6rem', fontWeight: 900, color: 'white', letterSpacing: '4px' }}>EXPORT_PAPER_PACKAGE</h4>
-                <p style={{ margin: 0, fontSize: '0.95rem', color: '#94a3b8', fontWeight: 300, marginTop: '0.5rem' }}>Generate IEEE-format PDF figures and metrics JSON for paper submission</p>
+                <h4 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600, color: 'white' }}>Audit Log Export</h4>
+                <p style={{ margin: '0.2rem 0 0', fontSize: '0.95rem', color: '#9ca3af' }}>Full audit logs available for forensic download.</p>
               </div>
-              <button
-                onClick={async () => {
-                  setExporting(true); setExportResult(null)
-                  try {
-                    const figRes = await generatePaperFigures()
-                    const metricsRes = await getPaperMetricsSummary()
-                    setExportResult({ figures: figRes.figures, outputDir: figRes.output_dir, metricsReady: !!metricsRes?.main_models })
-                  } catch (e) { setExportResult({ error: e.message }) }
-                  finally { setExporting(false) }
-                }}
-                disabled={exporting}
-                style={{ background: '#8b5cf6', color: 'white', border: 'none', padding: '1rem 2.5rem', cursor: 'pointer', fontWeight: 700, fontSize: '1rem', fontFamily: 'var(--font-mono)', letterSpacing: '2px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-              >
-                {exporting ? <><Loader size={16} className="animate-spin" /> GENERATING...</> : 'EXPORT_PAPER'}
+              <button style={{ background: 'transparent', border: '1px solid #10b981', color: '#10b981', padding: '0.75rem 1.5rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Download size={18} /> Export Logs
               </button>
             </div>
-
-            {exportResult && !exportResult.error && (
-              <div style={{ background: '#0f172a', borderRadius: '8px', padding: '1.5rem' }}>
-                {exportResult.figures?.map((f, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                    <Check size={16} color={f.generated ? '#22c55e' : '#ef4444'} />
-                    <span style={{ color: f.generated ? '#22c55e' : '#ef4444', fontFamily: 'monospace', fontSize: '0.9rem' }}>
-                      {f.file} {f.generated ? 'generated' : 'missing'}
-                    </span>
-                  </div>
-                ))}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
-                  <Check size={16} color={exportResult.metricsReady ? '#22c55e' : '#ef4444'} />
-                  <span style={{ color: exportResult.metricsReady ? '#22c55e' : '#ef4444', fontFamily: 'monospace', fontSize: '0.9rem' }}>
-                    All metrics JSON ready
-                  </span>
-                </div>
-                <p style={{ margin: '1rem 0 0', color: '#94a3b8', fontSize: '0.85rem' }}>
-                  Paper figures saved to: <code style={{ color: '#8b5cf6' }}>{exportResult.outputDir}</code>
-                </p>
-              </div>
-            )}
-            {exportResult?.error && (
-              <p style={{ color: '#ef4444', marginTop: '1rem' }}>Error: {exportResult.error}</p>
-            )}
           </div>
+
+          <div className="glass-panel" style={{ padding: '2.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1.5rem' }}>
+              <div style={{ width: '56px', height: '56px', background: 'rgba(139,92,246,0.1)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <FileText size={28} color="#8b5cf6" />
+              </div>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+                  <div>
+                    <h4 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 600, color: 'white' }}>Export Paper Package</h4>
+                    <p style={{ margin: '0.2rem 0 0', fontSize: '0.95rem', color: '#9ca3af' }}>Generate IEEE-format PDF figures and metrics JSON for publication submission.</p>
+                  </div>
+                  <button
+                    onClick={async () => {
+                      setExporting(true); setExportResult(null)
+                      try {
+                        const figRes = await generatePaperFigures()
+                        const metricsRes = await getPaperMetricsSummary()
+                        setExportResult({ figures: figRes.figures, outputDir: figRes.output_dir, metricsReady: !!metricsRes?.main_models })
+                      } catch (e) { setExportResult({ error: e.message }) }
+                      finally { setExporting(false) }
+                    }}
+                    disabled={exporting}
+                    style={{ background: '#8b5cf6', color: 'white', border: 'none', padding: '0.75rem 1.5rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                  >
+                    {exporting ? <><Loader size={16} className="animate-spin" /> Generating...</> : 'Export Package'}
+                  </button>
+                </div>
+
+                {exportResult && !exportResult.error && (
+                  <div style={{ background: '#18181b', borderRadius: '8px', padding: '1.25rem', border: '1px solid #27272a' }}>
+                    {exportResult.figures?.map((f, i) => (
+                      <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                        <Check size={16} color={f.generated ? '#22c55e' : '#ef4444'} />
+                        <span style={{ color: f.generated ? '#22c55e' : '#ef4444', fontFamily: 'monospace', fontSize: '0.85rem' }}>
+                          {f.file} {f.generated ? 'generated' : 'missing'}
+                        </span>
+                      </div>
+                    ))}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                      <Check size={16} color={exportResult.metricsReady ? '#22c55e' : '#ef4444'} />
+                      <span style={{ color: exportResult.metricsReady ? '#22c55e' : '#ef4444', fontFamily: 'monospace', fontSize: '0.85rem' }}>
+                        All metrics JSON ready
+                      </span>
+                    </div>
+                    <p style={{ margin: '1rem 0 0', color: '#9ca3af', fontSize: '0.85rem' }}>
+                      Package saved to: <code style={{ color: '#8b5cf6', background: '#27272a', padding: '0.1rem 0.3rem', borderRadius: '4px' }}>{exportResult.outputDir}</code>
+                    </p>
+                  </div>
+                )}
+                {exportResult?.error && (
+                  <p style={{ color: '#ef4444', marginTop: '1rem', fontSize: '0.9rem' }}>Error: {exportResult.error}</p>
+                )}
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </motion.div>

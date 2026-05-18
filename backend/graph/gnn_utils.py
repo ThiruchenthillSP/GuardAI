@@ -81,7 +81,7 @@ def get_graph_for_ui(df, G, fraud_probs=None):
         nodes.append({
             "id": str(tx_id),
             "label": f"TX {tx_id}",
-            "val": row.get('amount', 50),
+            "val": float(row.get('original_amount', row.get('amount', 50))),
             "isFraud": bool(row.get('is_fraud', False)),
             "probability": float(prob),
             "risk": "HIGH" if prob > 0.7 else ("MEDIUM" if prob > 0.3 else "LOW")

@@ -23,7 +23,7 @@ const ResearchMetrics = () => {
   ]
 
   const Section = ({ icon: Icon, title, color, children }) => (
-    <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '12px', padding: '2rem', marginBottom: '1.5rem' }}>
+    <div className="glass-panel" style={{ padding: '2rem', marginBottom: '1.5rem' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem' }}>
         <Icon size={20} color={color} />
         <h3 style={{ margin: 0, color: 'white', fontSize: '1.1rem' }}>{title}</h3>

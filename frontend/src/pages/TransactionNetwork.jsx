@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
-import ForceGraph3D from 'react-force-graph-3d';
-import * as THREE from 'three';
+import ForceGraph2D from 'react-force-graph-2d';
 import { getGraphData, getGnnExplanations } from '../services/api';
 import { Shield, ShieldAlert, RefreshCw, Maximize } from 'lucide-react';
 
@@ -31,34 +30,10 @@ const TransactionNetwork = () => {
         }
     };
 
-    // Auto-orbit camera for cinematic feel
-    useEffect(() => {
-        if (graphRef.current && !loading && graphData.nodes.length > 0) {
-            let angle = 0;
-            const distance = 400; // Radius of orbit
-            const interval = setInterval(() => {
-                if (graphRef.current) {
-                    graphRef.current.cameraPosition({
-                        x: distance * Math.sin(angle),
-                        z: distance * Math.cos(angle),
-                        y: distance * Math.sin(angle * 0.5) // Slight bob
-                    });
-                    angle += 0.002;
-                }
-            }, 30);
-            return () => clearInterval(interval);
-        }
-    }, [loading, graphData]);
-
     const handleNodeClick = useCallback(node => {
         setSelectedNode(node);
-        const distance = 80;
-        const distRatio = 1 + distance/Math.hypot(node.x, node.y, node.z);
-        graphRef.current.cameraPosition(
-            { x: node.x * distRatio, y: node.y * distRatio, z: node.z * distRatio }, 
-            node, 
-            2000  
-        );
+        graphRef.current.centerAt(node.x, node.y, 1000);
+        graphRef.current.zoom(8, 2000);
     }, [graphRef]);
 
     const getNodeColor = (node) => {
@@ -74,10 +49,10 @@ const TransactionNetwork = () => {
                 <div style={{ background: 'rgba(2, 6, 23, 0.7)', backdropFilter: 'blur(10px)', padding: '12px 20px', borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.3)', color: 'white' }}>
                     <h2 style={{ margin: 0, fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '10px', textShadow: '0 0 10px rgba(59, 130, 246, 0.8)' }}>
                         <Maximize size={20} color="#60a5fa" />
-                        Neural 3D Transaction Network
+                        Neural 2D Transaction Network
                     </h2>
                     <p style={{ margin: '5px 0 0 0', fontSize: '0.8rem', color: '#94a3b8' }}>
-                        Live WebGL cluster synthesis and relationship vectors
+                        Live 2D cluster synthesis and relationship vectors
                     </p>
                 </div>
                 
@@ -156,31 +131,32 @@ const TransactionNetwork = () => {
                 </div>
             )}
 
-            {/* 3D WebGL Graph Rendering */}
+            {/* 2D Canvas Graph Rendering */}
             {!loading && (
-                <ForceGraph3D
+                <ForceGraph2D
                     ref={graphRef}
                     graphData={graphData}
                     nodeLabel="label"
                     nodeRelSize={4}
                     nodeVal={node => Math.sqrt(node.val) * 1.5}
-                    // Cinematic Emissive Materials for Nodes
-                    nodeThreeObject={node => {
+                    nodeCanvasObject={(node, ctx, globalScale) => {
                         const size = Math.sqrt(node.val) * 1.5 + 2;
                         const color = getNodeColor(node);
-                        // Make Fraud nodes glow brightly using MeshPhongMaterial
-                        const material = new THREE.MeshPhongMaterial({ 
-                            color: color,
-                            emissive: color,
-                            emissiveIntensity: node.isFraud ? 1.5 : (node.probability > 0.5 ? 0.8 : 0.2),
-                            transparent: true,
-                            opacity: 0.95
-                        });
-                        const geometry = new THREE.SphereGeometry(size, 32, 32); // High resolution balls
-                        return new THREE.Mesh(geometry, material);
+                        ctx.beginPath();
+                        ctx.arc(node.x, node.y, size, 0, 2 * Math.PI, false);
+                        ctx.fillStyle = color;
+                        
+                        if (node.isFraud || node.probability > 0.5) {
+                            ctx.shadowColor = color;
+                            ctx.shadowBlur = 10;
+                        } else {
+                            ctx.shadowBlur = 0;
+                        }
+                        
+                        ctx.fill();
+                        ctx.shadowBlur = 0; // reset for next drawing
                     }}
                     backgroundColor="#020617"
-                    showNavInfo={false}
                     linkColor={link => {
                         const explainedEdges = gnnExplanations.flatMap(e => e.top_edges || []);
                         const isExplained = explainedEdges.some(ed => {
@@ -190,7 +166,6 @@ const TransactionNetwork = () => {
                         });
                         return isExplained ? '#f59e0b' : 'rgba(255, 255, 255, 0.1)';
                     }}
-                    linkOpacity={0.4}
                     linkWidth={1}
                     linkDirectionalParticles={node => (node.isFraud || node.probability > 0.5) ? 4 : 1}
                     linkDirectionalParticleWidth={2}
@@ -202,11 +177,6 @@ const TransactionNetwork = () => {
                     onNodeClick={handleNodeClick}
                 />
             )}
-            
-            {/* Ambient Lighting Override for ForceGraph3D */}
-            <div style={{display: 'none'}}>
-                {graphRef.current?.scene().add(new THREE.AmbientLight(0x404040, 2))}
-            </div>
         </div>
     );
 };

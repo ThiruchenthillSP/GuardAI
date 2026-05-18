@@ -43,6 +43,10 @@ def preprocess_data(df, scaler=None, label_encoders=None):
                 )
         print(f"  [Preprocess] Applied {len(label_encoders)} saved label encoders")
             
+    # Save original amount for UI visualization before scaling
+    if 'amount' in df.columns:
+        df['original_amount'] = df['amount']
+
     # 4. Numerical Normalization/Scaling
     numerical_cols = [
         'amount', 'spending_deviation_score', 'velocity_score', 

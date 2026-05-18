@@ -1,15 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: dark;
-  --bg-color: #0f172a;
-  --panel-bg: #1e293b;
-  --primary: #3b82f6;
-  --text: #f8fafc;
-  --text-dim: #94a3b8;
-  --border: #334155;
+  
+  /* Minimal Dark Palette */
+  --bg-color: #0a0a0a; /* Pitch black */
+  --panel-bg: #111111; /* Very dark gray */
+  --primary: #3b82f6; /* Professional blue */
+  --primary-hover: #2563eb;
+  --secondary: #64748b;
+  --danger: #ef4444; 
+  --success: #10b981; 
+  --warning: #f59e0b; 
+  
+  --text: #f3f4f6; /* Off-white */
+  --text-dim: #9ca3af; /* Soft gray */
+  --border: #27272a; /* Subtle border */
 
   color: var(--text);
   background-color: var(--bg-color);
@@ -20,6 +30,7 @@ body {
   display: flex;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--bg-color);
 }
 
 #root {
@@ -28,11 +39,30 @@ body {
 
 h1, h2, h3, h4 {
   margin-top: 0;
-  color: white;
+  color: #ffffff;
 }
 
+button {
+  transition: all 0.2s ease;
+}
 button:hover {
   opacity: 0.9;
+}
+
+/* Solid Panel Utilities (reusing the glass-panel class name for minimal changes in components) */
+.glass-panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+/* Remove glows */
+.text-glow-blue, .text-glow-red {
+  text-shadow: none;
+}
+.box-glow-blue {
+  box-shadow: none;
 }
 
 .animate-spin {
@@ -42,4 +72,19 @@ button:hover {
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+/* Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-color); 
+}
+::-webkit-scrollbar-thumb {
+  background: #27272a; 
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46; 
 }

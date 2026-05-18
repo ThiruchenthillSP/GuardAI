@@ -15,12 +15,15 @@ const Sidebar = () => {
           alignItems: 'center', 
           gap: '1rem', 
           padding: '1rem', 
-          color: active ? '#38bdf8' : '#94a3b8',
-          textDecoration: 'none',
-          background: active ? 'rgba(56, 189, 248, 0.1)' : 'transparent',
+          background: active ? '#1d4ed8' : 'transparent',
           borderRadius: '8px',
-          marginBottom: '0.5rem'
+          marginBottom: '0.5rem',
+          border: '1px solid transparent',
+          color: active ? '#ffffff' : '#9ca3af',
+          transition: 'all 0.2s ease'
         }}
+        onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = '#27272a'; e.currentTarget.style.color = '#ffffff'; }}
+        onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#9ca3af'; }}
       >
         <Icon size={20} />
         <span style={{ fontWeight: 500 }}>{label}</span>
@@ -29,10 +32,10 @@ const Sidebar = () => {
   }
 
   return (
-    <div style={{ width: '260px', height: '100vh', padding: '1.5rem', borderRight: '1px solid #334155', background: '#1e293b', display: 'flex', flexDirection: 'column' }}>
+    <div className="glass-panel" style={{ width: '260px', height: 'calc(100vh - 2rem)', margin: '1rem 0 1rem 1rem', padding: '1.5rem', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '3rem', padding: '0.5rem' }}>
-        <Shield color="#38bdf8" size={28} />
-        <h2 style={{ margin: 0, fontSize: '1.2rem', color: 'white' }}>GuardAI</h2>
+        <Shield color="#3b82f6" size={28} />
+        <h2 style={{ margin: 0, fontSize: '1.25rem', color: 'white', fontWeight: 600 }}>GuardAI</h2>
       </div>
 
       <nav style={{ flex: 1 }}>

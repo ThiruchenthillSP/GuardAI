@@ -40,13 +40,15 @@ const FRAUD_PRESET = {
 }
 
 // ── Styles ───────────────────────────────────────────────────
+// ── Styles ───────────────────────────────────────────────────
 const inputStyle = {
-  width: '100%', padding: '0.7rem', background: '#0f172a',
-  border: '1px solid #334155', borderRadius: '6px', color: 'white',
-  fontSize: '0.85rem', boxSizing: 'border-box',
+  width: '100%', padding: '0.75rem', background: '#0a0a0a',
+  border: '1px solid #27272a', borderRadius: '6px', color: 'white',
+  fontSize: '0.9rem', boxSizing: 'border-box', outline: 'none',
+  transition: 'border-color 0.2s'
 }
-const labelStyle = { color: '#94a3b8', fontSize: '0.75rem', display: 'block', marginBottom: '0.35rem' }
-const sectionTitle = { color: '#cbd5e1', fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.75rem', marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }
+const labelStyle = { color: '#9ca3af', fontSize: '0.8rem', display: 'block', marginBottom: '0.35rem', fontWeight: 500 }
+const sectionTitle = { color: '#ffffff', fontSize: '0.9rem', fontWeight: 600, marginBottom: '0.75rem', marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }
 
 function Prediction() {
   const [formData, setFormData] = useState({ ...NORMAL_PRESET })
@@ -83,47 +85,25 @@ function Prediction() {
   const probPercent = result ? (result.probability * 100) : 0
 
   return (
-    <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-      <header style={{ marginBottom: '1.5rem' }}>
-        <h1 style={{ color: 'white' }}>Fraud Prediction</h1>
-        <p style={{ color: '#94a3b8' }}>Analyze transactions for risk factors</p>
+    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <header style={{ marginBottom: '2.5rem' }}>
+        <h1 style={{ color: 'white', margin: 0, fontSize: '2rem', fontWeight: 600 }}>Real-Time Fraud Scanner</h1>
+        <p style={{ color: '#9ca3af', margin: '0.5rem 0 0', fontSize: '1rem' }}>Enter transaction details or use presets</p>
       </header>
 
       {/* ── Test Preset Buttons ── */}
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
-        <button
-          onClick={() => applyPreset(NORMAL_PRESET)}
-          style={{
-            flex: 1, padding: '0.85rem', background: 'linear-gradient(135deg, #064e3b, #065f46)',
-            border: '1px solid #10b981', borderRadius: '10px', color: '#6ee7b7',
-            fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center',
-            justifyContent: 'center', gap: '0.5rem', fontSize: '0.9rem',
-            transition: 'all 0.2s',
-          }}
-          onMouseOver={e => e.currentTarget.style.transform = 'translateY(-1px)'}
-          onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
-        >
-          <ShieldCheck size={18} /> Test: Normal Transaction
+      <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+        <button type="button" onClick={() => setFormData(NORMAL_PRESET)} style={{ flex: 1, background: '#111111', border: '1px solid #10b981', color: '#10b981', padding: '0.75rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 500, transition: 'background 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.background='#10b98115'} onMouseLeave={(e)=>e.currentTarget.style.background='#111111'}>
+          Test: Safe Transaction
         </button>
-        <button
-          onClick={() => applyPreset(FRAUD_PRESET)}
-          style={{
-            flex: 1, padding: '0.85rem', background: 'linear-gradient(135deg, #7f1d1d, #991b1b)',
-            border: '1px solid #ef4444', borderRadius: '10px', color: '#fca5a5',
-            fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center',
-            justifyContent: 'center', gap: '0.5rem', fontSize: '0.9rem',
-            transition: 'all 0.2s',
-          }}
-          onMouseOver={e => e.currentTarget.style.transform = 'translateY(-1px)'}
-          onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}
-        >
-          <ShieldAlert size={18} /> Test: Suspicious Transaction
+        <button type="button" onClick={() => setFormData(FRAUD_PRESET)} style={{ flex: 1, background: '#111111', border: '1px solid #ef4444', color: '#ef4444', padding: '0.75rem', borderRadius: '6px', cursor: 'pointer', fontWeight: 500, transition: 'background 0.2s' }} onMouseEnter={(e)=>e.currentTarget.style.background='#ef444415'} onMouseLeave={(e)=>e.currentTarget.style.background='#111111'}>
+          Test: Suspicious Transaction
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '1.5rem' }}>
-        {/* ── LEFT: Input Form ── */}
-        <div style={{ background: '#1e293b', padding: '1.5rem', borderRadius: '12px', border: '1px solid #334155' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+        {/* Left Side: Input Form */}
+        <div className="glass-panel" style={{ padding: '2rem', display: 'flex', flexDirection: 'column' }}>
           <h3 style={{ color: 'white', marginBottom: '0.5rem', fontSize: '1rem' }}>Transaction Details</h3>
           <form onSubmit={handleSubmit}>
 
@@ -224,16 +204,31 @@ function Prediction() {
               </div>
             </div>
 
-            <button disabled={loading} style={{
-              width: '100%', padding: '0.9rem', marginTop: '1.25rem',
-              background: loading ? '#334155' : 'linear-gradient(135deg, #2563eb, #3b82f6)',
-              color: 'white', border: 'none', borderRadius: '8px', fontWeight: 'bold',
-              cursor: loading ? 'not-allowed' : 'pointer',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
-              fontSize: '0.95rem', transition: 'all 0.2s',
-            }}>
-              {loading ? <Loader2 className="animate-spin" size={20} /> : <Search size={20} />}
-              {loading ? 'Analyzing...' : 'Run Prediction Scan'}
+            {/* Submit Button */}
+            <button 
+              onClick={handleSubmit} 
+              disabled={loading}
+              style={{ 
+                marginTop: '2rem', 
+                background: '#2563eb', 
+                color: 'white', 
+                border: 'none', 
+                padding: '0.85rem', 
+                borderRadius: '6px', 
+                fontSize: '1rem', 
+                fontWeight: 500, 
+                cursor: loading ? 'wait' : 'pointer', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                gap: '0.5rem',
+                transition: 'background 0.2s'
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#1d4ed8'}
+              onMouseLeave={(e) => e.currentTarget.style.background = '#2563eb'}
+            >
+              {loading ? <Loader2 className="animate-spin" size={18} /> : <Search size={18} />}
+              {loading ? 'Scanning Neural Network...' : 'Run Prediction Scan'}
             </button>
           </form>
         </div>

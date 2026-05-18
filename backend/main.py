@@ -454,7 +454,15 @@ def graph_data():
         if not os.path.exists(data_path):
             data_path = os.path.normpath(os.path.join(local_dir, "..", data_file))
             
-        df = load_data(data_path, sample_size=500)
+        df = load_data(data_path, sample_size=10000)
+        
+        # Ensure fraud nodes are included in the UI sample
+        if 'is_fraud' in df.columns:
+            frauds = df[df['is_fraud'] == True]
+            safes = df[df['is_fraud'] == False]
+            safe_sample = safes.sample(n=min(450, len(safes)), random_state=42) if not safes.empty else safes
+            df = pd.concat([frauds, safe_sample]).sample(frac=1, random_state=42).head(500)
+
         df_clean, _, _ = preprocess_data(df)
         df_feat = generate_features(df_clean)
         G = build_graph(df_feat)
